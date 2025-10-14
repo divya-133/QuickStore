@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+  <div class="checkout-card">
+    <h2 class="checkout-title">🛒 Secure Checkout</h2>
+
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      <ul>
+        {% for item in cart %}
+          <li>
+            <span class="item-name">{{ item.title }}</span>
+            <span class="item-price">₹{{ "%.2f"|format(item.price) }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="total">
+        <strong>Total:</strong> <span>₹{{ "%.2f"|format(total) }}</span>
+      </div>
+    </div>
+
+    <form id="checkoutForm" class="payment-form">
+      <h3>Payment Details</h3>
+      <div class="form-group">
+        <label for="name">Name on Card</label>
+        <input type="text" id="name" name="name" placeholder="John Doe" required>
+      </div>
+
+      <div class="form-group">
+        <label for="card">Card Number</label>
+        <input type="text" id="card" name="card" placeholder="1234 5678 9012 3456" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="expiry">Expiry</label>
+          <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required>
+        </div>
+        <div class="form-group half">
+          <label for="cvv">CVV</label>
+          <input type="text" id="cvv" name="cvv" placeholder="123" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-pay">💳 Pay ₹{{ "%.2f"|format(total) }}</button>
+    </form>
+  </div>
+</div>
+
+<!-- Payment Success Popup -->
+<div id="paymentSuccessPopup" class="popup-overlay">
+  <div class="popup-content">
+    <div class="success-icon">✅</div>
+    <h2>Payment Successful!</h2>
+    <p>Thank you for your purchase 💖</p>
+    <button class="btn-close">Continue Shopping</button>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('checkoutForm');
+  const popup = document.getElementById('paymentSuccessPopup');
+  const closeBtn = document.querySelector('.btn-close');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    popup.classList.add('active');
+    setTimeout(() => popup.classList.remove('active'), 3000);
+  });
+
+  closeBtn.addEventListener('click', () => popup.classList.remove('active'));
+</script>
+
+{% endblock %}
+

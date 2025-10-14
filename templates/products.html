@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickStore</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">🛍️ QuickStore</div>
+  
+    <form action="/" method="get" class="search-form">
+      <input type="text" name="q" placeholder="Search for products, brands and more..."
+             value="{{ query }}">
+      
+      <select name="category" onchange="this.form.submit()">
+        <option value="">All</option>
+        <option value="smartphones" {% if category == 'smartphones' %}selected{% endif %}>Smartphones</option>
+        <option value="laptops" {% if category == 'laptops' %}selected{% endif %}>Laptops</option>
+        <option value="fragrances" {% if category == 'fragrances' %}selected{% endif %}>Fragrances</option>
+      </select>
+
+      <button type="submit">🔍</button>
+    </form>
+
+    <a href="{{ url_for('cart') }}" class="cart-btn">
+      🛒 Cart <span class="cart-count">{{ (session.get('cart') or [])|length }}</span>
+    </a>
+  </header>
+
+    <!-- Product List -->
+  <main class="product-list">
+  {% if products %}
+    {% for p in products %}
+      <div class="product">
+        <!-- Clickable product image + title -->
+        <a href="{{ url_for('product_detail', product_id=p.id) }}" class="product-link">
+          <img src="{{ p.thumbnail }}" alt="{{ p.title }}">
+          <h3>{{ p.title }}</h3>
+        </a>
+        <div class="details">
+          <p class="desc">{{ p.description[:70] }}...</p>
+          <p class="price">₹{{ p.price * 85 }}</p>
+         </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="no-results">No products found for “{{ query }}”.</p>
+  {% endif %}
+
+  </main>
+</body>
+</html>

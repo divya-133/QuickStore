@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="product-list">
+  {% for p in products %}
+  <div class="product">
+    <img src="{{ url_for('static', filename='images/' ~ p.image_file) }}" alt="{{ p.name }}">
+    <h3>{{ p.name }}</h3>
+    <p>₹{{ p.price }}</p>
+    <a href="{{ url_for('product_detail', product_id=p.id) }}">View</a>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('add_to_cart', product_id=p.id) }}" class="btn">Add to Cart</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

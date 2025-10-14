@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}QuickStore Pro{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <!-- ---------------- Navbar ---------------- -->
+  <header class="navbar">
+    <div class="logo">🛍️ QuickStore</div>
+    <nav class="nav">
+      {% set cart_items = session.get('cart') or [] %}
+      {% if session.get('user') %}
+        <a href="{{ url_for('cart') }}">🛒 Cart <span class="cart-count">{{ cart_items|length }}</span></a>
+        <a href="{{ url_for('logout') }}" class="btn-primary">Logout</a>
+      {% else %}
+        <a href="javascript:void(0)" id="loginBtn" class="btn-primary">Login</a>
+        <a href="javascript:void(0)" id="registerBtn" class="btn-primary">Register</a>
+        <a href="{{ url_for('cart') }}">🛒 Cart <span class="cart-count">{{ cart_items|length }}</span></a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- ---------------- LOGIN / REGISTER MODALS ---------------- -->
+  <!-- Login Modal -->
+  <div id="loginModal" class="auth-overlay">
+    <div class="auth-card">
+      <button class="close-btn">&times;</button>
+      <h2>Login</h2>
+      <form method="POST" action="{{ url_for('login') }}">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" class="submit-btn">Login</button>
+      </form>
+      <p class="note">Don't have an account? <span id="switchToRegister">Register</span></p>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div id="registerModal" class="auth-overlay">
+    <div class="auth-card">
+      <button class="close-btn">&times;</button>
+      <h2>Register</h2>
+      <form method="POST" action="{{ url_for('register') }}">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <button type="submit" class="submit-btn">Register</button>
+      </form>
+      <p class="note">Already have an account? <span id="switchToLogin">Login</span></p>
+    </div>
+  </div>
+
+  <!-- ---------------- Main Content ---------------- -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ---------------- JS for Modals ---------------- -->
+  <script>
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const loginModal = document.getElementById('loginModal');
+    const registerModal = document.getElementById('registerModal');
+
+    const loginClose = loginModal.querySelector('.close-btn');
+    const registerClose = registerModal.querySelector('.close-btn');
+
+    const switchToRegister = document.getElementById('switchToRegister');
+    const switchToLogin = document.getElementById('switchToLogin');
+
+    if(loginBtn) loginBtn.onclick = () => loginModal.classList.add('active');
+    if(registerBtn) registerBtn.onclick = () => registerModal.classList.add('active');
+
+    loginClose.onclick = () => loginModal.classList.remove('active');
+    registerClose.onclick = () => registerModal.classList.remove('active');
+
+    switchToRegister.onclick = () => {
+      loginModal.classList.remove('active');
+      registerModal.classList.add('active');
+    };
+    switchToLogin.onclick = () => {
+      registerModal.classList.remove('active');
+      loginModal.classList.add('active');
+    };
+
+    // Close modal on overlay click
+    window.onclick = function(event) {
+      if(event.target == loginModal) loginModal.classList.remove('active');
+      if(event.target == registerModal) registerModal.classList.remove('active');
+    }
+  </script>
+</body>
+</html>
+
+

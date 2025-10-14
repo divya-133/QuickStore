@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+<div class="product-detail-page">
+  <div class="product-detail-card">
+    <div class="product-image">
+      <img src="{{ product.thumbnail }}" alt="{{ product.title }}">
+    </div>
+    <div class="product-info">
+      <h2>{{ product.title }}</h2>
+      <p class="price">₹{{ product.price }}</p>
+      <p class="description">{{ product.description }}</p>
+      <p class="brand"><strong>Brand:</strong> {{ product.brand }}</p>
+      <p class="category"><strong>Category:</strong> {{ product.category }}</p>
+      <p class="rating"><strong>Rating:</strong> {{ product.rating }} ⭐</p>
+
+      <div class="quantity-controls">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" value="1" min="1">
+      </div>
+
+      <div class="product-buttons">
+        <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-btn">Add to Cart</a>
+        <a href="{{ url_for('buy_now', product_id=product.id) }}" class="checkout-btn">Buy Now</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
