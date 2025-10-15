@@ -13,7 +13,7 @@
     <nav class="nav">
       {% set cart_items = session.get('cart') or [] %}
       {% if session.get('user') %}
-        <a href="{{ url_for('cart') }}">🛒 Cart <span class="cart-count">{{ cart_items|length }}</span></a>
+        <a href="{{ url_for('cart') }}">🛒 Cart ({{ cart_count }})</a>
         <a href="{{ url_for('logout') }}" class="btn-primary">Logout</a>
       {% else %}
         <a href="javascript:void(0)" id="loginBtn" class="btn-primary">Login</a>
@@ -23,31 +23,32 @@
     </nav>
   </header>
 
-  <!-- ---------------- LOGIN / REGISTER MODALS ---------------- -->
-  <!-- Login Modal -->
+  <!-- ---------------- LOGIN MODAL ---------------- -->
   <div id="loginModal" class="auth-overlay">
     <div class="auth-card">
       <button class="close-btn">&times;</button>
       <h2>Login</h2>
-      <form method="POST" action="{{ url_for('login') }}">
+      <form id="loginForm">
         <input type="email" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Password" required>
+        <p id="loginMessage" class="error-text" style="color:red; margin:5px 0;"></p>
         <button type="submit" class="submit-btn">Login</button>
       </form>
       <p class="note">Don't have an account? <span id="switchToRegister">Register</span></p>
     </div>
   </div>
 
-  <!-- Register Modal -->
+  <!-- ---------------- REGISTER MODAL ---------------- -->
   <div id="registerModal" class="auth-overlay">
     <div class="auth-card">
       <button class="close-btn">&times;</button>
       <h2>Register</h2>
-      <form method="POST" action="{{ url_for('register') }}">
+      <form id="registerForm">
         <input type="text" name="username" placeholder="Username" required>
         <input type="email" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <p id="registerMessage" class="error-text" style="color:red; margin:5px 0;"></p>
         <button type="submit" class="submit-btn">Register</button>
       </form>
       <p class="note">Already have an account? <span id="switchToLogin">Login</span></p>
@@ -59,21 +60,19 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- ---------------- JS for Modals ---------------- -->
+  <!-- ---------------- JS for Modals + AJAX ---------------- -->
   <script>
     const loginBtn = document.getElementById('loginBtn');
     const registerBtn = document.getElementById('registerBtn');
     const loginModal = document.getElementById('loginModal');
     const registerModal = document.getElementById('registerModal');
-
     const loginClose = loginModal.querySelector('.close-btn');
     const registerClose = registerModal.querySelector('.close-btn');
-
     const switchToRegister = document.getElementById('switchToRegister');
     const switchToLogin = document.getElementById('switchToLogin');
 
-    if(loginBtn) loginBtn.onclick = () => loginModal.classList.add('active');
-    if(registerBtn) registerBtn.onclick = () => registerModal.classList.add('active');
+    if (loginBtn) loginBtn.onclick = () => loginModal.classList.add('active');
+    if (registerBtn) registerBtn.onclick = () => registerModal.classList.add('active');
 
     loginClose.onclick = () => loginModal.classList.remove('active');
     registerClose.onclick = () => registerModal.classList.remove('active');
@@ -87,13 +86,50 @@
       loginModal.classList.add('active');
     };
 
-    // Close modal on overlay click
-    window.onclick = function(event) {
-      if(event.target == loginModal) loginModal.classList.remove('active');
-      if(event.target == registerModal) registerModal.classList.remove('active');
-    }
+    window.onclick = (e) => {
+      if (e.target === loginModal) loginModal.classList.remove('active');
+      if (e.target === registerModal) registerModal.classList.remove('active');
+    };
+
+    // ---------------- AJAX LOGIN ----------------
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      const res = await fetch("{{ url_for('login') }}", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      const msg = document.getElementById("loginMessage");
+      msg.style.color = data.status === "error" ? "red" : "green";
+      msg.textContent = data.message;
+
+      if (data.status === "success") {
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    });
+
+    // ---------------- AJAX REGISTER ----------------
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      const res = await fetch("{{ url_for('register') }}", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      const msg = document.getElementById("registerMessage");
+      msg.style.color = data.status === "error" ? "red" : "green";
+      msg.textContent = data.message;
+
+      if (data.status === "success") {
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    });
   </script>
 </body>
 </html>
-
-

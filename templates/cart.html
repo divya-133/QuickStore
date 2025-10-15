@@ -35,8 +35,14 @@
     </div>
 
   {% else %}
-    <p class="empty">Your cart is empty.</p>
-  {% endif %}
+<div class="empty-cart">
+  <div class="empty-cart-icon">🛒</div>
+  <h2>Your Cart is Empty</h2>
+  <p>Looks like you haven't added any products yet. Start shopping and fill your cart with amazing deals!</p>
+  <a href="/" class="browse-btn">Browse Products</a>
+</div>
+{% endif %}
+
 </div>
 {% endblock %}
 

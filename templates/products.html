@@ -25,7 +25,7 @@
     </form>
 
     <a href="{{ url_for('cart') }}" class="cart-btn">
-      🛒 Cart <span class="cart-count">{{ (session.get('cart') or [])|length }}</span>
+      🛒 Cart 
     </a>
   </header>
 
@@ -43,12 +43,51 @@
           <p class="desc">{{ p.description[:70] }}...</p>
           <p class="price">₹{{ p.price * 85 }}</p>
          </div>
+         <!-- Add to Cart Button -->
+      <div class="actions">
+        <a href="{{ url_for('add_to_cart', product_id=p.id) }}" class="add-cart-btn">➕ Add to Cart</a>
+      </div>
       </div>
     {% endfor %}
   {% else %}
     <p class="no-results">No products found for “{{ query }}”.</p>
   {% endif %}
-
   </main>
+
+    <!-- ---------------- Footer ---------------- -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-about">
+        <h3>🛍️ QuickStore</h3>
+        <p>Your one-stop destination for the best products online. Shop smart, fast, and secure with QuickStore!</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="{{ url_for('cart') }}">Cart</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p>Email: support@quickstore.com</p>
+        <p>Phone: +91 98765 43210</p>
+        <div class="social-icons">
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384005.png" alt="Facebook"></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384017.png" alt="Instagram"></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384014.png" alt="Twitter"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {{ 2025 }} QuickStore. All rights reserved.</p>
+    </div>
+  </footer>
+
 </body>
 </html>
